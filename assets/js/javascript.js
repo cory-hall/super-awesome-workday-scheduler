@@ -48,10 +48,11 @@ function buildRow(hour, timeOfDay) {
    }
 
    // create text portion of time block
-   descBlockEl.classList.add(setBlockColors(descBlockEl));
-   descBlockEl.classList.add("description"); 
-   descBlockEl.classList.add("col-8");
    descBlockEl.setAttribute("id", hour);
+   setBlockColors(descBlockEl);
+   descBlockEl.classList.add("description");
+   descBlockEl.classList.add("col-8");
+
 
    // append to time block
    timeBlockEl.appendChild(descBlockEl);
@@ -78,37 +79,41 @@ function getDate() {
 
 function setBlockColors(descBlockEl) {
    var hour = descBlockEl.getAttribute("id")
+   console.log(hour);
+   console.log(hourNow)
 
    if (hour == hourNow) {
-      return "present"
+      return descBlockEl.classList.add("present");
    }
    else if (hour > hourNow) {
-      return "future"
-   } else {
-      return "past"
+      return descBlockEl.classList.add("future");
+   }
+   else {
+      return descBlockEl.classList.add("past");
    }
 }
 
 // this function is used to save individual time blocks to localStorage
 function saveHour(id) {
-   var timeBlock = [];
-   var id = event.target.getAttribute("id");
    var desc = document.querySelector("textarea[id='" + id + "'").value;
 
-   timeBlock = {
-      hour: id,
-      desc: desc
+   var timeBlock = {
+      "hour": id,
+      "desc": desc
    };
-   loadHour();
    allData.push(timeBlock);
    localStorage.setItem("timeBlock", JSON.stringify(allData));
-
 };
 
 // this function is used to load saved time blocks from localStorage
 function loadHour() {
+   var tempArray = []
 
-   allData = JSON.parse(localStorage.getItem("timeBlock"));
+   tempArray = JSON.parse(localStorage.getItem("timeBlock"));
+
+   if (tempArray) {
+      allData.push(tempArray);
+   }
 }
 
 // event listener to populate the page on load
@@ -117,5 +122,5 @@ addEventListener("load", loadHour);
 
 // event listener to save the time block on button click
 $("body").on("click", ".saveBtn", function () {
-   saveHour(this.id);
+   saveHour(this.getAttribute("id"));
 })
